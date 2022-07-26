@@ -15,11 +15,7 @@ const agent = supertest(app);
 describe('Recommendation tests suite', () => {
 
   it('should insert recommendation', async () => {
-    const recommendation = {
-      name: faker.music.songName(),
-      youtubeLink: 'https://www.youtube.com/' + faker.random.word()
-    };
-    await agent.post('/').send(recommendation);
+    const recommendation = await insert();
     const recommendationCreated = await prisma.recommendation.findFirst({
       where: { name: recommendation.name }
     });
@@ -35,4 +31,8 @@ describe('Recommendation tests suite', () => {
     expect(res.status).toBe(201);
   })
 
-})
+});
+
+afterAll(async () => {
+  await prisma.$disconnect();
+});
